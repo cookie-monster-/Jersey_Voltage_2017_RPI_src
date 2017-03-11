@@ -48,6 +48,7 @@ public class Main {
       //imageSource.putFrame(gp.hsvThresholdOutput());
 	imageSource.putFrame(inputImage);
 	sdTable.putNumber("pi.centerline", gp.centerline);
+	sdTable.putNumber("pi.height", gp.height);
     }
   }
 

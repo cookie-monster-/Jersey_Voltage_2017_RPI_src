@@ -32,6 +32,7 @@ public class GripPipeline {
 	private ArrayList<MatOfPoint> findContoursOutput = new ArrayList<MatOfPoint>();
 	private ArrayList<MatOfPoint> filterContoursOutput = new ArrayList<MatOfPoint>();
 	public double centerline = -2;
+	public double height = -2;
 
 	static {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
@@ -56,17 +57,17 @@ public class GripPipeline {
 
 		// Step Filter_Contours0:
 		ArrayList<MatOfPoint> filterContoursContours = findContoursOutput;
-		double filterContoursMinArea = 750.0;
-		double filterContoursMinPerimeter = 100.0;
-		double filterContoursMinWidth = 50.0;
-		double filterContoursMaxWidth = 1000;
-		double filterContoursMinHeight = 10.0;
-		double filterContoursMaxHeight = 1000;
-		double[] filterContoursSolidity = {50.35971223021583, 100.0};
+		double filterContoursMinArea = 600.0;
+		double filterContoursMinPerimeter = 80.0;
+		double filterContoursMinWidth = 10.0;
+		double filterContoursMaxWidth = 1200;
+		double filterContoursMinHeight = 3.0;
+		double filterContoursMaxHeight = 1200;
+		double[] filterContoursSolidity = {20.0, 100.0};
 		double filterContoursMaxVertices = 1000000;
 		double filterContoursMinVertices = 0;
 		double filterContoursMinRatio = 0.0;
-		double filterContoursMaxRatio = 50.0;
+		double filterContoursMaxRatio = 200.0;
 		filterContours(filterContoursContours, filterContoursMinArea, filterContoursMinPerimeter, filterContoursMinWidth, filterContoursMaxWidth, filterContoursMinHeight, filterContoursMaxHeight, filterContoursSolidity, filterContoursMaxVertices, filterContoursMinVertices, filterContoursMinRatio, filterContoursMaxRatio, filterContoursOutput);
 		
 	}
@@ -185,18 +186,24 @@ public class GripPipeline {
 			output.add(contour);
 		}
 		double last_centerline = centerline;
+		double last_height = height;
 		if (output.size() == 2)
 		{
 			final MatOfPoint contour = output.get(0);
 			final Rect bb = Imgproc.boundingRect(contour);
 			centerline = bb.x + bb.width / 2;
+			height = bb.y + bb.height / 2;
 		}
 		else
 		{
 			centerline = -1;
+			height = -1;
 		}
 		if ((last_centerline <= -1.9) || (Math.abs(centerline - last_centerline) > 5)) {
 			System.out.println("centerline="+centerline);
+		}
+		if ((last_height <= -1.9) || (Math.abs(height - last_height) > 5)) {
+			System.out.println("height="+height);
 		}
 	}
 
