@@ -151,6 +151,7 @@ public class Main {
 					imageSource.putFrame(inputImage);
 					sdTable.putNumber("piGear.centerline", gp.centerline);
 					sdTable.putNumber("piGear.height", gp.height);
+					sdTable.putNumber("piGear.area", gp.area);
 					sdTable.putNumber("piGear.time", (System.nanoTime() - start) / 1000000);
 				}
 			  }

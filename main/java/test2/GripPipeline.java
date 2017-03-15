@@ -33,6 +33,7 @@ public class GripPipeline {
 	private ArrayList<MatOfPoint> filterContoursOutput = new ArrayList<MatOfPoint>();
 	public double centerline = -2;
 	public double height = -2;
+	public double area = -2;
 
 	static {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
@@ -80,7 +81,7 @@ public class GripPipeline {
 		Mat hsvThresholdInput = source0;
 		double[] hsvThresholdHue = {70.0, 100.0};  //76, 95.0
 		double[] hsvThresholdSaturation = {200.0, 255.0}; //213
-		double[] hsvThresholdValue = {70.0, 120.0};  //16, 102
+		double[] hsvThresholdValue = {80.0, 255.0};  //16, 102
 		hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, hsvThresholdOutput);
 
 		// Step Find_Contours0:
@@ -90,17 +91,17 @@ public class GripPipeline {
 
 		// Step Filter_Contours0:
 		ArrayList<MatOfPoint> filterContoursContours = findContoursOutput;
-		double filterContoursMinArea = 500.0;
-		double filterContoursMinPerimeter = 100.0;
-		double filterContoursMinWidth = 20.0;
-		double filterContoursMaxWidth = 1200;
-		double filterContoursMinHeight = 40.0;
-		double filterContoursMaxHeight = 1200;
-		double[] filterContoursSolidity = {40.0, 100.0};
+		double filterContoursMinArea = 80.0;
+		double filterContoursMinPerimeter = 20.0;
+		double filterContoursMinWidth = 2.0;
+		double filterContoursMaxWidth = 1000;
+		double filterContoursMinHeight = 10.0;
+		double filterContoursMaxHeight = 1000;
+		double[] filterContoursSolidity = {30.0, 100.0};
 		double filterContoursMaxVertices = 1000000;
 		double filterContoursMinVertices = 0;
-		double filterContoursMinRatio = 0.0;
-		double filterContoursMaxRatio = 400.0;
+		double filterContoursMinRatio = 0.1;
+		double filterContoursMaxRatio = 0.8;
 		filterContours(filterContoursContours, filterContoursMinArea, filterContoursMinPerimeter, filterContoursMinWidth, filterContoursMaxWidth,
 		filterContoursMinHeight, filterContoursMaxHeight, filterContoursSolidity, filterContoursMaxVertices, filterContoursMinVertices, filterContoursMinRatio, 
 		filterContoursMaxRatio, filterContoursOutput, true /* forGear */);
@@ -222,6 +223,7 @@ public class GripPipeline {
 		}
 		double last_centerline = centerline;
 		double last_height = height;
+		double last_area = area;
 		if (output.size() == 2)
 		{
 			MatOfPoint contour = output.get(0);
@@ -232,12 +234,14 @@ public class GripPipeline {
 				final Rect bb2 = Imgproc.boundingRect(contour);
 				centerline = (bb.x + (bb2.x + bb2.width)) / 2;
 				height = bb.y + bb.height / 2;
+				area = bb.height * bb.width;
 			}
 			
 			else
 			{
 				centerline = bb.x + bb.width / 2;
 				height = bb.y + bb.height / 2;
+				area = bb.height * bb.width;
 			}
 			
 		}
@@ -245,12 +249,16 @@ public class GripPipeline {
 		{
 			centerline = -1;
 			height = -1;
+			area = -1;
 		}
 		if ((last_centerline <= -1.9) || (Math.abs(centerline - last_centerline) > 5)) {
 			System.out.println("centerline="+centerline);
 		}
 		if ((last_height <= -1.9) || (Math.abs(height - last_height) > 5)) {
 			System.out.println("height="+height);
+		}
+		if ((last_area <= -1.9) || (Math.abs(area - last_area) > 5)) {
+			System.out.println("height="+area);
 		}
 	}
 
