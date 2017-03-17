@@ -132,6 +132,7 @@ public class Main {
 			  }
 			  else
 			  {
+				  sdTable.putString("pi.hi", "hi!");
 				  if(oldMode.equals("ComputerVision") == false)
 				  {
 					  VideoProperty wbm = camera2.getProperty("white_balance_temperature");
